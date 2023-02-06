@@ -1,0 +1,19 @@
+.excess {
+    color: red;
+}
+
+.within {
+    color: green;
+}
+
+table {
+    width: 50%;
+    text-align: center;
+    border: 2px solid black;
+    border-collapse: collapse;
+    empty-cells: hide;
+}
+
+td, tr, th {
+    border: 1px solid black;
+}
