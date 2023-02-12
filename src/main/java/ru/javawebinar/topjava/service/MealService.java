@@ -6,7 +6,8 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
@@ -38,12 +39,18 @@ public class MealService {
         return MealsUtil.getTos(repository.getAll(authId), DEFAULT_CALORIES_PER_DAY);
     }
 
-    public List<MealTo> getAll(Integer authId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        if (startDateTime == null && endDateTime == null) {
+    public List<MealTo> getAll(Integer authId, LocalDate startDate, LocalTime startTime,
+                               LocalDate endDate, LocalTime endTime) {
+        if (startDate == null && endDate == null && startTime == null && endTime == null) {
             return getAll(authId);
         } else {
-            return MealsUtil.getFilteredTos(repository.getAll(authId), DEFAULT_CALORIES_PER_DAY, startDateTime, endDateTime);
+            startDate = startDate == null ? LocalDate.MIN : startDate;
+            endDate = endDate == null ? LocalDate.MAX : endDate;
+            startTime = startTime == null ? LocalTime.MIN : startTime;
+            endTime = endTime == null ? LocalTime.MAX : endTime;
         }
+        return MealsUtil.getFilteredTos(repository.getAll(authId), DEFAULT_CALORIES_PER_DAY,
+                startDate.atTime(startTime), endDate.atTime(endTime));
     }
 
     public void update(Meal meal, Integer authId) {

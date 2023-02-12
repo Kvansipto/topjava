@@ -7,7 +7,8 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -30,9 +31,14 @@ public class MealRestController {
         return service.getAll(authUserId());
     }
 
-    public List<MealTo> getAll(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        log.info("getAll from {} to {}", startDateTime, endDateTime);
-        return service.getAll(authUserId(),startDateTime, endDateTime);
+    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate) {
+        log.info("getAll from {} to {}", startDate, endDate);
+        return service.getAll(authUserId(), startDate, null, endDate, null);
+    }
+
+    public List<MealTo> getAll(LocalTime startTime, LocalTime endTime) {
+        log.info("getAll from {} to {}", startTime, endTime);
+        return service.getAll(authUserId(), null, startTime, null, endTime);
     }
 
     public Meal get(int id) {
