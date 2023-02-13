@@ -53,6 +53,17 @@ public class MealService {
                 startDate.atTime(startTime), endDate.atTime(endTime));
     }
 
+    public List<MealTo> getAll(Integer authId, LocalTime startTime, LocalTime endTime) {
+        if (startTime == null && endTime == null) {
+            return getAll(authId);
+        } else {
+            startTime = startTime == null ? LocalTime.MIN : startTime;
+            endTime = endTime == null ? LocalTime.MAX : endTime;
+        }
+        return MealsUtil.getFilteredTos(repository.getAll(authId), DEFAULT_CALORIES_PER_DAY,
+                startTime, endTime);
+    }
+
     public void update(Meal meal, Integer authId) {
         checkNotFoundWithId(repository.save(meal, authId), meal.getId());
     }

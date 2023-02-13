@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
@@ -13,10 +14,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.*;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @WebServlet(name = "MealServlet")
@@ -48,6 +53,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
         switch (action == null ? "all" : action) {
@@ -68,8 +74,20 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute("meals",
-                        mealRestController.getAll());
+                LocalDate startDate = toDate(request.getParameter("startDate"));
+                LocalDate endDate = toDate(request.getParameter("endDate"));
+                LocalTime startTime = toTime(request.getParameter("startTime"));
+                LocalTime endTime = toTime(request.getParameter("endTime"));
+
+                List<MealTo> meals;
+                if (startDate == null && endDate == null) {
+                    meals = mealRestController.getAll(startTime, endTime);
+                } else if (startTime == null && endTime == null) {
+                    meals = mealRestController.getAll(startDate, endDate);
+                } else {
+                    meals = mealRestController.getAll(startDate, endDate, startTime, endTime);
+                }
+                request.setAttribute("meals", meals);
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

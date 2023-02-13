@@ -14,6 +14,24 @@
         .excess {
             color: red;
         }
+
+        form {
+            display: block;
+            margin-top: 0em;
+            margin-block-end: 1em;
+        }
+
+        input {
+            margin-left: 15px;
+            margin-right: 15px;
+            margin-top: 15px;
+            max-width: 16.666667%;
+        }
+
+        button {
+            margin-right: 15px;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -21,6 +39,25 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
+    <form id="filter">
+        <div>
+            <label for="startDate">От даты (включая)</label>
+            <input name="startDate" type="date" id="startDate" autocomplete="off">
+        </div>
+        <div>
+            <label for="endDate">До даты (включая)</label>
+            <input name="endDate" type="date" id="endDate" autocomplete="off">
+        </div>
+        <div>
+            <label for="startTime">От времени (включая)</label>
+            <input name="startTime" type="time" id="startTime" autocomplete="off">
+        </div>
+        <div>
+            <label for="endTime">До времени (исключая)</label>
+            <input name="endTime" type="time" id="endTime" autocomplete="off">
+        </div>
+        <button type="submit">Отфильтровать</button>
+    </form>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
