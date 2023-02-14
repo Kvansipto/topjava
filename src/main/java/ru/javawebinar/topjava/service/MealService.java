@@ -10,9 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 import static ru.javawebinar.topjava.util.ValidationUtil.*;
-
 
 @Service
 public class MealService {
@@ -23,48 +21,38 @@ public class MealService {
         this.repository = repository;
     }
 
-    public Meal create(Meal meal, Integer authId) {
-        return checkNotFoundWithId(repository.save(meal, authId), meal.getId());
+    public Meal create(Meal meal, int userId) {
+        return repository.save(meal, userId);
     }
 
-    public void delete(int id, Integer authId) {
-        checkNotFoundWithId(repository.delete(id, authId), id);
+    public void delete(int id, int userId) {
+        checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
-    public Meal get(int id, Integer authId) {
-        return checkNotFoundWithId(repository.get(id, authId), id);
+    public Meal get(int id, int userId) {
+        return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-    public List<MealTo> getAll(Integer authId) {
-        return MealsUtil.getTos(repository.getAll(authId), DEFAULT_CALORIES_PER_DAY);
+    public List<MealTo> getAll(int userId, int userCaloriesPerDay) {
+        return MealsUtil.getTos(repository.getAll(userId), userCaloriesPerDay);
     }
 
-    public List<MealTo> getAll(Integer authId, LocalDate startDate, LocalTime startTime,
-                               LocalDate endDate, LocalTime endTime) {
+    public List<MealTo> getAll(int userId, LocalDate startDate, LocalTime startTime,
+                               LocalDate endDate, LocalTime endTime, int userCaloriesPerDay) {
         if (startDate == null && endDate == null && startTime == null && endTime == null) {
-            return getAll(authId);
+            return getAll(userId, userCaloriesPerDay);
         } else {
             startDate = startDate == null ? LocalDate.MIN : startDate;
             endDate = endDate == null ? LocalDate.MAX : endDate;
             startTime = startTime == null ? LocalTime.MIN : startTime;
             endTime = endTime == null ? LocalTime.MAX : endTime;
         }
-        return MealsUtil.getFilteredTos(repository.getAll(authId), DEFAULT_CALORIES_PER_DAY,
-                startDate.atTime(startTime), endDate.atTime(endTime));
+        return MealsUtil.getFilteredTos(repository.getAll(userId), userCaloriesPerDay,
+                startDate, startTime,
+                endDate, endTime);
     }
 
-    public List<MealTo> getAll(Integer authId, LocalTime startTime, LocalTime endTime) {
-        if (startTime == null && endTime == null) {
-            return getAll(authId);
-        } else {
-            startTime = startTime == null ? LocalTime.MIN : startTime;
-            endTime = endTime == null ? LocalTime.MAX : endTime;
-        }
-        return MealsUtil.getFilteredTos(repository.getAll(authId), DEFAULT_CALORIES_PER_DAY,
-                startTime, endTime);
-    }
-
-    public void update(Meal meal, Integer authId) {
-        checkNotFoundWithId(repository.save(meal, authId), meal.getId());
+    public void update(Meal meal, int userId) {
+        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
 }

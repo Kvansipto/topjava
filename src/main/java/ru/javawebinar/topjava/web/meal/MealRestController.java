@@ -11,14 +11,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
+import static ru.javawebinar.topjava.web.SecurityUtil.*;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 @Controller
 public class MealRestController {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final MealService service;
 
@@ -28,22 +28,12 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return service.getAll(authUserId());
+        return service.getAll(authUserId(), authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getAllFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getAll from {} {} to {} {}", startDate, startTime, endDate, endTime);
-        return service.getAll(authUserId(), startDate, startTime, endDate, endTime);
-    }
-
-    public List<MealTo> getAll(LocalDate startDate, LocalDate endDate) {
-        log.info("getAll from {} to {}", startDate, endDate);
-        return service.getAll(authUserId(), startDate, null, endDate, null);
-    }
-
-    public List<MealTo> getAll(LocalTime startTime, LocalTime endTime) {
-        log.info("getAll from {} to {}", startTime, endTime);
-        return service.getAll(authUserId(), startTime, endTime);
+        return service.getAll(authUserId(), startDate, startTime, endDate, endTime, authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {

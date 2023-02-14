@@ -5,11 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,18 +16,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Objects;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.*;
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
-@WebServlet(name = "MealServlet")
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
+    private ConfigurableApplicationContext appCtx;
+    private MealRestController mealRestController;
 
-    private final ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-    private final MealRestController mealRestController = appCtx.getBean(MealRestController.class);
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        mealRestController = appCtx.getBean(MealRestController.class);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -37,10 +38,8 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
 
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                authUserId(),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")));
+                Integer.parseInt(request.getParameter("calories")), LocalDateTime.parse(request.getParameter("dateTime")),
+                request.getParameter("description"), null);
 
         if (meal.isNew()) {
             log.info("Create {}", mealRestController.create(meal));
@@ -53,7 +52,6 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
         switch (action == null ? "all" : action) {
@@ -79,15 +77,7 @@ public class MealServlet extends HttpServlet {
                 LocalTime startTime = toTime(request.getParameter("startTime"));
                 LocalTime endTime = toTime(request.getParameter("endTime"));
 
-                List<MealTo> meals;
-                if (startDate == null && endDate == null) {
-                    meals = mealRestController.getAll(startTime, endTime);
-                } else if (startTime == null && endTime == null) {
-                    meals = mealRestController.getAll(startDate, endDate);
-                } else {
-                    meals = mealRestController.getAll(startDate, endDate, startTime, endTime);
-                }
-                request.setAttribute("meals", meals);
+                request.setAttribute("meals", mealRestController.getAllFiltered(startDate, endDate, startTime, endTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
@@ -95,7 +85,6 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        super.destroy();
         appCtx.close();
     }
 

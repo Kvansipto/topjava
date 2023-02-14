@@ -42,19 +42,19 @@
     <form id="filter">
         <div>
             <label for="startDate">От даты (включая)</label>
-            <input name="startDate" type="date" id="startDate" autocomplete="off">
+            <input name="startDate" type="date" id="startDate" autocomplete="off" value="${param.get("startDate")}">
         </div>
         <div>
             <label for="endDate">До даты (включая)</label>
-            <input name="endDate" type="date" id="endDate" autocomplete="off">
+            <input name="endDate" type="date" id="endDate" autocomplete="off" value="${param.get("endDate")}">
         </div>
         <div>
             <label for="startTime">От времени (включая)</label>
-            <input name="startTime" type="time" id="startTime" autocomplete="off">
+            <input name="startTime" type="time" id="startTime" autocomplete="off" value="${param.get("startTime")}">
         </div>
         <div>
             <label for="endTime">До времени (исключая)</label>
-            <input name="endTime" type="time" id="endTime" autocomplete="off">
+            <input name="endTime" type="time" id="endTime" autocomplete="off" value="${param.get("endTime")}">
         </div>
         <button type="submit">Отфильтровать</button>
     </form>

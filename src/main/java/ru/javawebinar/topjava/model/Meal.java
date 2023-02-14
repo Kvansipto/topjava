@@ -15,15 +15,15 @@ public class Meal extends AbstractBaseEntity {
     private final int calories;
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
-        this(null, 1, dateTime, description, calories);
+        this(null, calories, dateTime, description, null);
     }
 
-    public Meal(Integer id, Integer userId, LocalDateTime dateTime, String description, int calories) {
+    public Meal(Integer id, int calories, LocalDateTime dateTime, String description, Integer userId) {
         super(id);
-        this.userId = userId;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+        this.userId = userId;
     }
 
     public LocalDateTime getDateTime() {
