@@ -46,9 +46,7 @@ public class MealService {
         endDate = endDate == null ? LocalDate.MAX : endDate;
         startTime = startTime == null ? LocalTime.MIN : startTime;
         endTime = endTime == null ? LocalTime.MAX : endTime;
-        return MealsUtil.getFilteredTos(repository.getAll(userId), userCaloriesPerDay,
-                startDate, startTime,
-                endDate, endTime);
+        return MealsUtil.getTos(repository.getAllFiltered(userId, startDate, startTime, endDate, endTime), userCaloriesPerDay);
     }
 
     public void update(Meal meal, int userId) {
