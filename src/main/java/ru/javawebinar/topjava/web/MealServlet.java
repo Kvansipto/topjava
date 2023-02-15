@@ -26,8 +26,7 @@ public class MealServlet extends HttpServlet {
     private MealRestController mealRestController;
 
     @Override
-    public void init() throws ServletException {
-        super.init();
+    public void init() {
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         mealRestController = appCtx.getBean(MealRestController.class);
     }

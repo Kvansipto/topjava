@@ -37,16 +37,15 @@ public class MealService {
         return MealsUtil.getTos(repository.getAll(userId), userCaloriesPerDay);
     }
 
-    public List<MealTo> getAll(int userId, LocalDate startDate, LocalTime startTime,
-                               LocalDate endDate, LocalTime endTime, int userCaloriesPerDay) {
+    public List<MealTo> getAllFiltered(int userId, LocalDate startDate, LocalTime startTime,
+                                       LocalDate endDate, LocalTime endTime, int userCaloriesPerDay) {
         if (startDate == null && endDate == null && startTime == null && endTime == null) {
             return getAll(userId, userCaloriesPerDay);
-        } else {
-            startDate = startDate == null ? LocalDate.MIN : startDate;
-            endDate = endDate == null ? LocalDate.MAX : endDate;
-            startTime = startTime == null ? LocalTime.MIN : startTime;
-            endTime = endTime == null ? LocalTime.MAX : endTime;
         }
+        startDate = startDate == null ? LocalDate.MIN : startDate;
+        endDate = endDate == null ? LocalDate.MAX : endDate;
+        startTime = startTime == null ? LocalTime.MIN : startTime;
+        endTime = endTime == null ? LocalTime.MAX : endTime;
         return MealsUtil.getFilteredTos(repository.getAll(userId), userCaloriesPerDay,
                 startDate, startTime,
                 endDate, endTime);

@@ -26,13 +26,12 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            meal = new Meal(meal.getId(), meal.getCalories(), meal.getDateTime(), meal.getDescription(), userId);
-            repository.put(meal.getId(), meal);
-        } else if (!isAllowed(meal, userId)) {
+        } else if (!isAllowed(repository.get(meal.getId()), userId)) {
             return null;
         }
-        Meal finalMeal = meal;
-        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> finalMeal);
+        Integer mealId = meal.getId();
+        meal = new Meal(mealId, meal.getCalories(), meal.getDateTime(), meal.getDescription(), userId);
+        return repository.put(mealId, meal);
     }
 
     @Override
