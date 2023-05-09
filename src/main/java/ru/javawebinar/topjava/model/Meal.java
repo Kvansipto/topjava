@@ -1,19 +1,50 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import org.hibernate.validator.constraints.Range;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query =
+                "DELETE FROM Meal m WHERE m.id=:id"),
+        @NamedQuery(name = Meal.ALL, query =
+                "SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.user.id =?1"),
+        @NamedQuery(name = Meal.ALL_BETWEEN_HALF_OPEN, query =
+                "SELECT m FROM Meal m LEFT JOIN FETCH m.user WHERE m.user.id =?1  AND m.dateTime >=?2 AND m.dateTime <?3 " +
+                        "ORDER BY m.dateTime DESC")
+})
+
+@Entity
+@Table(name = "meal")
 public class Meal extends AbstractBaseEntity {
+
+    public static final String DELETE = "Meal.delete";
+    public static final String ALL = "Meal.all";
+    public static final String ALL_BETWEEN_HALF_OPEN = "Meal.all_between_half_open";
+
+    @Column(name = "date_time", nullable = false)
+    @NotNull
     private LocalDateTime dateTime;
 
+    @Column(name = "description", nullable = false)
+    @NotBlank
+    @Size(max = 128)
     private String description;
 
+    @Column(name = "calories", nullable = false)
+    @NotNull
+    @Range(min = 10)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private User user;
 
     public Meal() {
